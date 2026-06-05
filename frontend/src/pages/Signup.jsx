@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { GoRocket } from "react-icons/go";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { AxiosInstance } from "../config/axiosIntance";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,8 @@ const Signup = () => {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -19,11 +22,20 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     console.log(formData);
+
+    let { username, email, password } = formData;
+
+    if (!username || !email || !password) {
+      toast.error("All fields are required !!");
+      return;
+    }
+
     try {
-      let resp = await axios.post("http://localhost:3000/users", formData);
+      let resp = await AxiosInstance.post("/users", formData);
       console.log(resp);
       toast.success("Signup Successfully");
       setFormData({ username: "", email: "", password: "" });
+      navigate("/login")
     } catch (error) {
       console.log(error);
       toast.error("Signup Failed");
