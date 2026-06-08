@@ -3,8 +3,11 @@ import toast from "react-hot-toast";
 import { GoRocket } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 import { AxiosInstance } from "../config/axiosIntance";
+import { useAuth } from "../context/UserContextProvider";
 
 const Login = () => {
+  const { setUser } = useAuth();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -60,6 +63,10 @@ const Login = () => {
 
     // persist data in localStorage
     localStorage.setItem("authUser", JSON.stringify(userData));
+
+    // save data in UserContext
+    setUser(userData);
+
     toast.success("Login successful!");
 
     // navigate to home page
@@ -68,7 +75,7 @@ const Login = () => {
 
   return (
     <main className="h-screen w-full bg-gray-50 flex items-center justify-center p-4">
-      <form 
+      <form
         onSubmit={handleLogin}
         className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100"
       >
@@ -83,8 +90,8 @@ const Login = () => {
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label 
-              htmlFor="email" 
+            <label
+              htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
               Email
@@ -101,8 +108,8 @@ const Login = () => {
           </div>
 
           <div className="space-y-1.5">
-            <label 
-              htmlFor="password" 
+            <label
+              htmlFor="password"
               className="block text-sm font-medium text-gray-700"
             >
               Password
@@ -120,17 +127,17 @@ const Login = () => {
         </div>
 
         <div className="pt-2">
-          <button 
+          <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-200"
           >
             Log in
           </button>
-          
+
           <p className="text-center text-sm text-gray-600 mt-6">
             Don't have an account?{" "}
-            <Link 
-              to="/signup" 
+            <Link
+              to="/signup"
               className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
             >
               Signup

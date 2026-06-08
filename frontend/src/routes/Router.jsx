@@ -4,11 +4,16 @@ const Home = lazy(() => import("../pages/Home"));
 const Login = lazy(() => import("../pages/Login"));
 const Signup = lazy(() => import("../pages/Signup"));
 const NotFound = lazy(() => import("../pages/NotFound"));
+const ProtectedRoute = lazy(() => import("./ProtectedRoute"));
 
 export const routes = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <ProtectedRoute>
+        <Home />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/login",

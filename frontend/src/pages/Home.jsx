@@ -1,9 +1,14 @@
-import React from 'react'
+import { lazy } from "react";
+const Navbar = lazy(() => import("../components/Navbar"));
 
 const Home = () => {
   return (
-    <div>Home</div>
-  )
-}
+    <div>
+      <Navbar />
 
-export default Home
+      <h1>Home Page</h1>
+    </div>
+  );
+};
+
+export default Home;
