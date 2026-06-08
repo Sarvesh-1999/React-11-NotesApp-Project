@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { GoRocket } from "react-icons/go";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AxiosInstance } from "../config/axiosIntance";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +21,6 @@ const Login = () => {
   async function getRegisteredUsers() {
     try {
       let resp = await AxiosInstance.get("/users");
-      // console.log(resp.data);//[{},{},{}]
       setRegisteredUser(resp.data);
     } catch (error) {
       console.log(error);
@@ -36,7 +34,6 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log(formData);
 
     let { email, password } = formData;
 
@@ -49,6 +46,12 @@ const Login = () => {
       return user.email === email && user.password === password;
     });
 
+    // Safety check: Prevent app crash if user is not found
+    if (!authUser) {
+      toast.error("Invalid email or password");
+      return;
+    }
+
     const userData = {
       id: authUser.id,
       username: authUser.username,
@@ -57,50 +60,81 @@ const Login = () => {
 
     // persist data in localStorage
     localStorage.setItem("authUser", JSON.stringify(userData));
-    // store data in userContext
+    toast.success("Login successful!");
 
     // navigate to home page
     navigate("/");
   };
 
   return (
-    <main className="h-screen w-full bg-gray-50 flex items-center justify-center">
-      <form onSubmit={handleLogin}>
-        <div>
-          <h1>Welcome Back</h1>
-          <p>
-            Login to continue <GoRocket />
+    <main className="h-screen w-full bg-gray-50 flex items-center justify-center p-4">
+      <form 
+        onSubmit={handleLogin}
+        className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100"
+      >
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+            Welcome Back
+          </h1>
+          <p className="text-gray-500 flex items-center justify-center gap-2">
+            Login to continue <GoRocket className="text-blue-500 text-lg" />
           </p>
         </div>
 
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-          />
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label 
+              htmlFor="email" 
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label 
+              htmlFor="password" 
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200"
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <button>Log in</button>
-          <p>
-            Dont have an account? <Link to="/signup">Signup</Link>
+        <div className="pt-2">
+          <button 
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-200"
+          >
+            Log in
+          </button>
+          
+          <p className="text-center text-sm text-gray-600 mt-6">
+            Don't have an account?{" "}
+            <Link 
+              to="/signup" 
+              className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+            >
+              Signup
+            </Link>
           </p>
         </div>
       </form>
