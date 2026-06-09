@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/UserContextProvider";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { AxiosInstance } from "../config/axiosIntance";
 
 const Navbar = () => {
   const { user, setUser } = useAuth();
@@ -15,6 +16,20 @@ const Navbar = () => {
     localStorage.removeItem("authUser");
     navigate("/login");
     toast.success("Logout successfull");
+  };
+
+  const handleDeleteProfile = async (id) => {
+    try {
+      let resp = await AxiosInstance.delete(`/users/${id}`);
+      console.log(resp);
+      setUser(null);
+      localStorage.removeItem("authUser");
+      navigate("/signup");
+      toast.success("Profile Deleted");
+    } catch (error) {
+      console.log(error);
+      toast.error("Unable to delete profile");
+    }
   };
 
   return (
@@ -43,8 +58,18 @@ const Navbar = () => {
             >
               <li className="py-2 px-5 hover:bg-white">My Account</li>
               <li className="py-2 px-5 hover:bg-white">Notes</li>
-              <li className="py-2 px-5 hover:bg-white">Delete Profile</li>
-              <li className="py-2 px-5 hover:bg-white">Update Profile</li>
+              <li
+                className="py-2 px-5 hover:bg-white"
+                onClick={() => handleDeleteProfile(user.id)}
+              >
+                Delete Profile
+              </li>
+              <Link
+                to={`/edit-user/${user.id}`}
+                className="py-2 px-5 hover:bg-white"
+              >
+                Update Profile
+              </Link>
               <li className="py-2 px-5 hover:bg-white" onClick={handleLogout}>
                 Logout
               </li>
